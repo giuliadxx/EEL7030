@@ -1,5 +1,5 @@
 // diretiva de compilação
-#include <reg51.h> // inclusão de arquivo com endereços de registradores do 8051
+#include <reg51.h>
 
 // declaração de constantes
 #define CS 0x00;
@@ -16,12 +16,16 @@ void main (void)
 	
 	while(1) {
 						
-	if (led != 0x01) led = led >> 1;
-	else led = 0x80;
-
-	P1 = ~led;
-	
-	for(i=0;i<275;i++);
-	
-	}
+		while (led != 0xFF){ 
+			led >>= 1;
+			led |= 0x80;
+			P1 = ~led;
+		}
+		
+		while (led != 0x00){
+			led <<= 1;
+			P1 = ~led;
+		}
+		
+		}
 }
