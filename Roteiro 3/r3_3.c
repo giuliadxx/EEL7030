@@ -3,7 +3,6 @@
 #pragma SMALL
 #include <reg51.h>
 
-
 // declaração dos protótipos de funções
 
 void write2nibbles(unsigned char *, unsigned char); // função p/envio dados/cmds p/display
@@ -12,41 +11,41 @@ void initdsp (void); // função que inicializa o display
 
 // declaração de constantes
 
-#define CMD 	0 		// 0000 0000 B -- objetiva fazer RS (P1.3) = 0
-#define DADO 	8 		// 0000 1000 B -- objetiva fazer RS (P1.3) = 1
-#define COL_7 0x87 	// 1000 0111 B   -- comando para posicionar cursor na coluna 07H
+#define CMD 		0 		// 0000 0000 B -- objetiva fazer RS (P1.3) = 0
+#define DADO 		8 		// 0000 1000 B -- objetiva fazer RS (P1.3) = 1
 
+#define COL_10 	0x90	// 1001 0000 B   -- comando para posicionar cursor na coluna 10H
+#define COM_SL 	0x18	// 0001 1000 B   -- comando para rotacionar mensagem para a esquerda
 
 // declaração de variáveis globais
 
 sbit CS = P0^7; // variável global
 sbit EN = P1^2; // variável global
 
-unsigned char code cadeia[]="Valor: $"; // array contendo mensagem
+unsigned char code cadeia[]="EEL7030 - 8051$"; // array contendo mensagem
 unsigned char code init[]={0x28,0x0C,0x06,'$'}; // vetor de inicializacao do display -- function set - display on/off - entry mode
-unsigned char lcd_code[]={0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x41,0x42,0x43,0x44,0x45,0x46};
+
 
 // função main
 void main (void)
 {
-	
-unsigned char dado_lido;
-	
-CS=0; // inibe displays de 7 segmentos
-initdsp(); // chama rotina de inicializacao dos display
-write2nibbles (cadeia,DADO); // envia caracteres a serem mostrados no display
-
-	while(1) {
 		
-		dado_lido = ~P2;
-		dado_lido &= 0x0f;
-
-		write1byte(lcd_code[dado_lido],DADO);
-
-		write1byte(COL_7,CMD);
-
-	 }  // end of while
-	
+	unsigned short x;
+		
+	CS=0; // inibe displays de 7 segmentos
+	initdsp(); // chama rotina de inicializacao dos display
+		
+	write2nibbles (cadeia,DADO); // envia caracteres a serem mostrados no display
+		
+	write1byte(COL_10,CMD);
+		
+	write2nibbles (cadeia,DADO); // envia caracteres a serem mostrados no display
+		
+		while(1) {
+			write1byte(COM_SL,CMD);
+			for (x=0; x<15000; x++); // introduz atraso -- melhor usar timer
+		}  // end of while
+		
 }  // end of main
 
 // Funcao para inicializar o display
@@ -84,4 +83,5 @@ void write1byte(unsigned char temp1, unsigned char RS)
 	EN=1;
 	EN=0;
 	for (x=0; x<50; x++); // introduz atraso -- melhor usar timer
+
 } // end of write1word

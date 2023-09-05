@@ -3,7 +3,6 @@
 #pragma SMALL
 #include <reg51.h>
 
-
 // declaração dos protótipos de funções
 
 void write2nibbles(unsigned char *, unsigned char); // função p/envio dados/cmds p/display
@@ -12,9 +11,9 @@ void initdsp (void); // função que inicializa o display
 
 // declaração de constantes
 
-#define CMD 	0 		// 0000 0000 B -- objetiva fazer RS (P1.3) = 0
-#define DADO 	8 		// 0000 1000 B -- objetiva fazer RS (P1.3) = 1
-#define COL_7 0x87 	// 1000 0111 B   -- comando para posicionar cursor na coluna 07H
+#define CMD 0 // 0000 0000 B -- objetiva fazer RS (P1.3) = 0
+#define DADO 8 // 0000 1000 B -- objetiva fazer RS (P1.3) = 1
+#define COL_7 0x87 // 1000 0111 B   -- comando para posicionar cursor na coluna 07H
 
 
 // declaração de variáveis globais
@@ -30,23 +29,26 @@ unsigned char lcd_code[]={0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x41
 void main (void)
 {
 	
-unsigned char dado_lido;
-	
-CS=0; // inibe displays de 7 segmentos
-initdsp(); // chama rotina de inicializacao dos display
-write2nibbles (cadeia,DADO); // envia caracteres a serem mostrados no display
+	unsigned char dado_lido,temp;
+		
+	CS=0; // inibe displays de 7 segmentos
+	initdsp(); // chama rotina de inicializacao dos display
+	write2nibbles (cadeia,DADO); // envia caracteres a serem mostrados no display
 
 	while(1) {
 		
 		dado_lido = ~P2;
-		dado_lido &= 0x0f;
 
-		write1byte(lcd_code[dado_lido],DADO);
+		temp = dado_lido >> 4;
+		write1byte(lcd_code[temp],DADO);
+
+		temp = dado_lido & 0x0f;
+		write1byte(lcd_code[temp],DADO);
 
 		write1byte(COL_7,CMD);
 
 	 }  // end of while
-	
+		
 }  // end of main
 
 // Funcao para inicializar o display
@@ -84,4 +86,5 @@ void write1byte(unsigned char temp1, unsigned char RS)
 	EN=1;
 	EN=0;
 	for (x=0; x<50; x++); // introduz atraso -- melhor usar timer
+
 } // end of write1word
