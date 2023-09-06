@@ -48,7 +48,6 @@ void delay(void) {
    
    for (i = 0; i < 15000; i++) { // Loop externo para gerar o atraso
       for (j = 0; j < 10; j++) { // Loop interno para ajustar o tempo
-         // Não faz nada
       }
    }
 }

@@ -2,7 +2,6 @@
 
 void c51_int0 (void);
 void c51_int1 (void);
-void delay(void);
 
 unsigned char state = 0;
 
@@ -13,18 +12,21 @@ void main (void) {
 	
 	EX0 = 1;
 	IT0 = 1; // interrupção por borda de descida
+
 	EX1 = 1;
-	IT1 = 1;
+	IT1 = 1; // interrupção por borda de descida
+
 	EA = 1; // interrupção habilitada
-	
+
 	ponteiro = mensagem;
+	
 	while (1) {
 		while (state != 1);
 		state = 0;
 		P1 = *(ponteiro+aux++);
 		if (aux == 16) aux = 0;
-		} // end of while
-	} //end of main
+	} // end of while
+} //end of main
 
 void c51_int0 (void) interrupt 0 {
 	state++;
@@ -34,13 +36,3 @@ void c51_int1 (void) interrupt 2 {
 	EX0 = ~EX0;
 	IE0 = 0;
 } //end of c51_int1
-
-void delay(void) {
-   int i, j;
-   
-   for (i = 0; i < 15000; i++) { // Loop externo para gerar o atraso
-      for (j = 0; j < 10; j++) { // Loop interno para ajustar o tempo
-         // Não faz nada
-      }
-   }
-}

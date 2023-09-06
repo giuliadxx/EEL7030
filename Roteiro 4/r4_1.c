@@ -1,34 +1,27 @@
 #include <reg51.h>
 
 void c51_int0 (void);
-void delay(void);
 unsigned char state = 0;
 
 void main (void) {
-	unsigned char aux = 0;
+
+	unsigned char aux = 0; // utilizar unsigned char pois sao 8 bits, conta ate FFh, da overflow, e volta a 0
+	unsigned short x;
 	
 	EX0 = 1;
-	EA = 1; // interrupção habilitada
 	IT0 = 1; // interrupção por borda de descida
 
-	while (1) {
+	EA = 1; // interrupção habilitada
+	
+	while (1) { 
 		while(state);
-		P1 = aux++;
-		if (aux == 16) aux = 0;
-		delay();
-		} 
-	}
+		P1=aux++;
+		for(x=0; x < 15000; x++);	
+	} // end of while
+} //end of main
+
 
 void c51_int0 (void) interrupt 0 {
-	state = state^0x01;
+	state=state^0x01;
 } //end of c51_int0
 
-void delay(void) {
-   int i, j;
-   
-   for (i = 0; i < 15000; i++) { // Loop externo para gerar o atraso
-      for (j = 0; j < 10; j++) { // Loop interno para ajustar o tempo
-         // Não faz nada
-      }
-   }
-}
